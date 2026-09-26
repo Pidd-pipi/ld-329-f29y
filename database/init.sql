@@ -26,13 +26,43 @@ CREATE TABLE IF NOT EXISTS needs (
   campus VARCHAR(40) NOT NULL,
   expect_time VARCHAR(80) NOT NULL,
   budget_type VARCHAR(40) NOT NULL,
-  description TEXT NOT NULL
+  description TEXT NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT '等待响应'
+);
+
+CREATE TABLE IF NOT EXISTS need_responses (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  need_id BIGINT NOT NULL,
+  responder VARCHAR(80) NOT NULL,
+  offer_skill VARCHAR(120) NOT NULL,
+  time_slot VARCHAR(40) NOT NULL,
+  place_type VARCHAR(10) NOT NULL,
+  place VARCHAR(120) NOT NULL,
+  note VARCHAR(255) NOT NULL DEFAULT '',
+  status VARCHAR(20) NOT NULL DEFAULT '等待中',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS swap_orders (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  need_id BIGINT NOT NULL,
+  response_id BIGINT NOT NULL,
+  requester VARCHAR(80) NOT NULL,
+  responder VARCHAR(80) NOT NULL,
+  offer_skill VARCHAR(120) NOT NULL,
+  time_slot VARCHAR(40) NOT NULL,
+  place VARCHAR(120) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT '待双方确认',
+  requester_confirmed TINYINT(1) NOT NULL DEFAULT 0,
+  responder_confirmed TINYINT(1) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS appointments (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   pair_name VARCHAR(120) NOT NULL,
   exchange_time VARCHAR(80) NOT NULL,
+  time_slot VARCHAR(40) NOT NULL,
   place VARCHAR(120) NOT NULL,
   status VARCHAR(40) NOT NULL,
   agenda TEXT NOT NULL

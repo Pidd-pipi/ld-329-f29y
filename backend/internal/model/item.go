@@ -23,6 +23,36 @@ type Need struct {
 	BudgetType  string `json:"budgetType"`
 	Description string `json:"description"`
 	Responses   int    `json:"responses"`
+	Status      string `json:"status"`
+}
+
+// Response 是响应者针对需求提交的应约信息。
+type Response struct {
+	ID         int    `json:"id"`
+	NeedID     int    `json:"needId"`
+	Responder  string `json:"responder"`
+	OfferSkill string `json:"offerSkill"`
+	TimeSlot   string `json:"timeSlot"`
+	PlaceType  string `json:"placeType"`
+	Place      string `json:"place"`
+	Note       string `json:"note"`
+	Status     string `json:"status"`
+}
+
+// SwapOrder 是发布者选中响应后生成的交换单，双方确认后生效。
+type SwapOrder struct {
+	ID                 int    `json:"id"`
+	NeedID             int    `json:"needId"`
+	NeedTitle          string `json:"needTitle"`
+	ResponseID         int    `json:"responseId"`
+	Requester          string `json:"requester"`
+	Responder          string `json:"responder"`
+	OfferSkill         string `json:"offerSkill"`
+	TimeSlot           string `json:"timeSlot"`
+	Place              string `json:"place"`
+	Status             string `json:"status"`
+	RequesterConfirmed bool   `json:"requesterConfirmed"`
+	ResponderConfirmed bool   `json:"responderConfirmed"`
 }
 
 type Match struct {
@@ -37,12 +67,14 @@ type Match struct {
 }
 
 type Appointment struct {
-	ID     int    `json:"id"`
-	Pair   string `json:"pair"`
-	Time   string `json:"time"`
-	Place  string `json:"place"`
-	Status string `json:"status"`
-	Agenda string `json:"agenda"`
+	ID           int      `json:"id"`
+	Pair         string   `json:"pair"`
+	Time         string   `json:"time"`
+	TimeSlot     string   `json:"timeSlot"`
+	Place        string   `json:"place"`
+	Status       string   `json:"status"`
+	Agenda       string   `json:"agenda"`
+	Participants []string `json:"participants"`
 }
 
 type Review struct {
@@ -69,6 +101,8 @@ type Profile struct {
 	Radar       map[string]int `json:"radar"`
 	History     []string       `json:"history"`
 	Reviews     []Review       `json:"reviews"`
+	Orders      []SwapOrder    `json:"orders"`
+	MyResponses []Response     `json:"myResponses"`
 }
 
 type Overview struct {
@@ -79,6 +113,7 @@ type Overview struct {
 	Needs        []Need         `json:"needs"`
 	Matches      []Match        `json:"matches"`
 	Appointments []Appointment  `json:"appointments"`
+	SwapOrders   []SwapOrder    `json:"swapOrders"`
 	Reviews      []Review       `json:"reviews"`
 	Messages     []Conversation `json:"messages"`
 	Profile      Profile        `json:"profile"`

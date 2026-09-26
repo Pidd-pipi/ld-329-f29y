@@ -19,9 +19,11 @@ docker compose up -d
 ## 主要功能
 
 - 技能发布与管理：技能描述、熟练度、可交换时间段、回报类型和作品凭证。
-- 需求发布与浏览：按类别、校区、期望时间和响应数量查看求助需求。
+- 需求发布与浏览：按类别、校区、期望时间和响应数量查看求助需求，需求列表实时显示状态（等待响应/已约成）。
+- 需求响应：响应者填写能提供的技能、空闲时段和线上/线下地点，同一需求不可重复响应。
+- 响应处理：发布者在等待中的响应里选一位，生成双方待确认的交换单，其余响应自动标为未选中；同时段已有确认预约会提示冲突并保留原预约，同一需求不能重复生成交换单。
 - 智能匹配推荐：展示互补技能、匹配度、共同可用时间和推荐理由。
-- 交换预约与确认：记录双方确认状态、时间、地点和协商议程。
+- 交换预约与确认：交换单双方确认后生效并生成预约，个人主页展示交换单与响应状态。
 - 评价与信用体系：评分、文字评价、信用分和信用等级用于推荐权重。
 - 消息通知系统：会话未读红点、系统通知和预约提醒。
 - 个人主页与技能墙：历史交换、收到评价和 ECharts 技能雷达图。
@@ -86,8 +88,11 @@ go run ./cmd/server
 - `GET /api/dashboard/overview`
 - `GET /api/skills`
 - `GET /api/needs`
+- `GET /api/needs/:id/responses` / `POST /api/needs/:id/responses`
+- `POST /api/needs/:id/responses/:responseId/accept`
 - `GET /api/matches`
 - `GET /api/appointments`
+- `GET /api/swap-orders` / `POST /api/swap-orders/:id/confirm`
 - `GET /api/reviews`
 - `GET /api/messages`
 - `GET /api/profile`

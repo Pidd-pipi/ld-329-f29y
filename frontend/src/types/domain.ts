@@ -21,6 +21,34 @@ export interface Need {
   budgetType: string;
   description: string;
   responses: number;
+  status: string;
+}
+
+export interface NeedResponse {
+  id: number;
+  needId: number;
+  responder: string;
+  offerSkill: string;
+  timeSlot: string;
+  placeType: string;
+  place: string;
+  note: string;
+  status: string;
+}
+
+export interface SwapOrder {
+  id: number;
+  needId: number;
+  needTitle: string;
+  responseId: number;
+  requester: string;
+  responder: string;
+  offerSkill: string;
+  timeSlot: string;
+  place: string;
+  status: string;
+  requesterConfirmed: boolean;
+  responderConfirmed: boolean;
 }
 
 export interface Match {
@@ -38,9 +66,11 @@ export interface Appointment {
   id: number;
   pair: string;
   time: string;
+  timeSlot: string;
   place: string;
   status: string;
   agenda: string;
+  participants: string[];
 }
 
 export interface Review {
@@ -67,6 +97,8 @@ export interface Profile {
   radar: Record<string, number>;
   history: string[];
   reviews: Review[];
+  orders: SwapOrder[];
+  myResponses: NeedResponse[];
 }
 
 export interface Overview {
@@ -77,6 +109,7 @@ export interface Overview {
   needs: Need[];
   matches: Match[];
   appointments: Appointment[];
+  swapOrders: SwapOrder[];
   reviews: Review[];
   messages: Conversation[];
   profile: Profile;

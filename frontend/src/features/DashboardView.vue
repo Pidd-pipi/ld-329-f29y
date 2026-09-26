@@ -6,6 +6,7 @@
       <MetricCard label="已发布技能" :value="overview.metrics.skills" />
       <MetricCard label="活跃需求" :value="overview.metrics.needs" />
       <MetricCard label="智能匹配" :value="overview.metrics.matches" />
+      <MetricCard label="交换单" :value="overview.metrics.orders ?? 0" />
       <MetricCard label="评价记录" :value="overview.metrics.reviews" />
     </section>
 
@@ -26,12 +27,12 @@
 
       <div class="panel">
         <h2>需求浏览</h2>
-        <el-table :data="overview.needs" size="small">
-          <el-table-column prop="title" label="需求" min-width="170" />
-          <el-table-column prop="category" label="类别" width="82" />
-          <el-table-column prop="campus" label="校区" width="96" />
-          <el-table-column prop="responses" label="响应" width="72" sortable />
-        </el-table>
+        <NeedBoard
+          :needs="overview.needs"
+          :current-user="currentUser"
+          @respond="openRespond"
+          @manage="openManage"
+        />
       </div>
 
       <div class="panel">
@@ -46,7 +47,7 @@
       </div>
 
       <div class="panel">
-        <h2>预约确认</h2>
+        <h2>交换预约</h2>
         <el-timeline>
           <el-timeline-item v-for="item in overview.appointments" :key="item.id" :timestamp="item.time">
             <strong>{{ item.pair }}</strong>
@@ -54,19 +55,12 @@
             <p class="muted">{{ item.agenda }}</p>
           </el-timeline-item>
         </el-timeline>
+        <el-divider content-position="left">交换单</el-divider>
+        <SwapOrderPanel :orders="overview.swapOrders" :current-user="currentUser" @confirm="confirmOrder" />
       </div>
 
-      <div class="panel profile-panel">
-        <div>
-          <h2>个人主页与技能墙</h2>
-          <h3>{{ overview.profile.name }}</h3>
-          <p>{{ overview.profile.major }} · {{ overview.profile.creditLevel }}</p>
-          <el-progress :percentage="overview.profile.creditScore" />
-          <ul>
-            <li v-for="item in overview.profile.history" :key="item">{{ item }}</li>
-          </ul>
-        </div>
-        <RadarChart :radar="overview.profile.radar" />
+      <div class="panel">
+        <ProfilePanel :profile="overview.profile" />
       </div>
 
       <div class="panel">
@@ -83,29 +77,82 @@
         </FeatureCard>
       </div>
     </section>
+
+    <ResponseFormDialog
+      v-model:visible="respondVisible"
+      :need="respondNeed"
+      :current-user="currentUser"
+      @submitted="reload"
+    />
+    <ResponseManageDialog
+      v-model:visible="manageVisible"
+      :need="manageNeed"
+      :current-user="currentUser"
+      @changed="reload"
+    />
   </main>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { ElMessage } from 'element-plus';
 import AppHeader from '../components/AppHeader.vue';
 import FeatureCard from '../components/FeatureCard.vue';
 import MetricCard from '../components/MetricCard.vue';
-import RadarChart from '../components/RadarChart.vue';
+import NeedBoard from '../components/NeedBoard.vue';
+import ProfilePanel from '../components/ProfilePanel.vue';
+import ResponseFormDialog from '../components/ResponseFormDialog.vue';
+import ResponseManageDialog from '../components/ResponseManageDialog.vue';
+import SwapOrderPanel from '../components/SwapOrderPanel.vue';
 import { fetchOverview } from '../services/storage.service';
-import type { Overview } from '../types/domain';
+import { confirmSwapOrder } from '../services/swaporder.service';
+import type { Need, Overview, SwapOrder } from '../types/domain';
 
 const overview = ref<Overview | null>(null);
 const loading = ref(true);
 const error = ref('');
 
+const respondVisible = ref(false);
+const respondNeed = ref<Need | null>(null);
+const manageVisible = ref(false);
+const manageNeedId = ref<number | null>(null);
+
+const currentUser = computed(() => overview.value?.profile.name ?? '');
+const manageNeed = computed(
+  () => overview.value?.needs.find((need) => need.id === manageNeedId.value) ?? null,
+);
+
+async function reload() {
+  overview.value = await fetchOverview();
+}
+
 onMounted(async () => {
   try {
-    overview.value = await fetchOverview();
+    await reload();
   } catch (err) {
     error.value = err instanceof Error ? err.message : '加载失败';
   } finally {
     loading.value = false;
   }
 });
+
+function openRespond(need: Need) {
+  respondNeed.value = need;
+  respondVisible.value = true;
+}
+
+function openManage(need: Need) {
+  manageNeedId.value = need.id;
+  manageVisible.value = true;
+}
+
+async function confirmOrder(order: SwapOrder) {
+  try {
+    await confirmSwapOrder(order.id, currentUser.value);
+    ElMessage.success('已确认交换单');
+    await reload();
+  } catch (err) {
+    ElMessage.error(err instanceof Error ? err.message : '确认失败');
+  }
+}
 </script>

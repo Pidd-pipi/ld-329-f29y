@@ -11,17 +11,24 @@ func Overview() model.Overview {
 	needs := repository.ListNeeds()
 	matches := repository.ListMatches()
 	appointments := repository.ListAppointments()
+	orders := repository.ListSwapOrders()
 	reviews := repository.ListReviews()
 	messages := repository.ListMessages()
+	responseTotal := 0
+	for _, need := range needs {
+		responseTotal += need.Responses
+	}
 	return model.Overview{
 		Service:    constants.ServiceName,
 		Categories: constants.SkillCategories,
 		Metrics: map[string]int{
 			"skills": len(skills), "needs": len(needs), "matches": len(matches),
 			"appointments": len(appointments), "reviews": len(reviews), "unread": 3,
+			"responses": responseTotal, "orders": len(orders),
 		},
 		Skills: skills, Needs: needs, Matches: matches,
-		Appointments: appointments, Reviews: reviews, Messages: messages,
+		Appointments: appointments, SwapOrders: orders,
+		Reviews: reviews, Messages: messages,
 		Profile: repository.GetProfile(),
 	}
 }
