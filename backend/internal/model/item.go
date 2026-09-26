@@ -23,6 +23,7 @@ type Need struct {
 	BudgetType  string `json:"budgetType"`
 	Description string `json:"description"`
 	Responses   int    `json:"responses"`
+	Status      string `json:"status"`
 }
 
 type Match struct {
@@ -40,6 +41,7 @@ type Appointment struct {
 	ID     int    `json:"id"`
 	Pair   string `json:"pair"`
 	Time   string `json:"time"`
+	Mode   string `json:"mode"`
 	Place  string `json:"place"`
 	Status string `json:"status"`
 	Agenda string `json:"agenda"`
@@ -72,14 +74,16 @@ type Profile struct {
 }
 
 type Overview struct {
-	Service      string         `json:"service"`
-	Categories   []string       `json:"categories"`
-	Metrics      map[string]int `json:"metrics"`
-	Skills       []Skill        `json:"skills"`
-	Needs        []Need         `json:"needs"`
-	Matches      []Match        `json:"matches"`
-	Appointments []Appointment  `json:"appointments"`
-	Reviews      []Review       `json:"reviews"`
-	Messages     []Conversation `json:"messages"`
-	Profile      Profile        `json:"profile"`
+	Service      string          `json:"service"`
+	Categories   []string        `json:"categories"`
+	Metrics      map[string]int  `json:"metrics"`
+	Skills       []Skill         `json:"skills"`
+	Needs        []Need          `json:"needs"`
+	Matches      []Match         `json:"matches"`
+	Appointments []Appointment   `json:"appointments"`
+	Reviews      []Review        `json:"reviews"`
+	Messages     []Conversation  `json:"messages"`
+	Responses    []Response      `json:"responses"`
+	Orders       []ExchangeOrder `json:"orders"`
+	Profile      Profile         `json:"profile"`
 }

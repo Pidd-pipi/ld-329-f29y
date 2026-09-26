@@ -58,13 +58,12 @@ npm run dev
 ├── src
 │   ├── components
 │   ├── constants
-│   ├── data
 │   ├── errors
 │   ├── features
 │   ├── logger
 │   ├── services
-│   ├── types
-│   └── utils
+│   ├── stores
+│   └── types
 ├── Dockerfile
 ├── nginx.conf
 ├── package.json
@@ -77,7 +76,7 @@ npm run dev
 
 ## 使用说明
 
-应用数据存储在浏览器本地。清空浏览器站点数据会重置演示数据。
+页面数据通过 `/api` 请求后端服务（开发服务器已代理到 `localhost:19629`），响应、交换单等状态由后端统一维护，重启后端会重置演示数据。
 
 ## License
 

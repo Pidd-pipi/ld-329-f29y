@@ -13,15 +13,23 @@ func Overview() model.Overview {
 	appointments := repository.ListAppointments()
 	reviews := repository.ListReviews()
 	messages := repository.ListMessages()
+	responses := repository.ListResponses()
+	orders := repository.ListOrders()
+	unread := 0
+	for _, conversation := range messages {
+		unread += conversation.Unread
+	}
 	return model.Overview{
 		Service:    constants.ServiceName,
 		Categories: constants.SkillCategories,
 		Metrics: map[string]int{
 			"skills": len(skills), "needs": len(needs), "matches": len(matches),
-			"appointments": len(appointments), "reviews": len(reviews), "unread": 3,
+			"appointments": len(appointments), "reviews": len(reviews), "unread": unread,
+			"responses": len(responses), "orders": len(orders),
 		},
 		Skills: skills, Needs: needs, Matches: matches,
 		Appointments: appointments, Reviews: reviews, Messages: messages,
+		Responses: responses, Orders: orders,
 		Profile: repository.GetProfile(),
 	}
 }

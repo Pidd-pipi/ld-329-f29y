@@ -38,6 +38,36 @@ CREATE TABLE IF NOT EXISTS appointments (
   agenda TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS need_responses (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  need_id BIGINT NOT NULL,
+  responder VARCHAR(80) NOT NULL,
+  offer_skill VARCHAR(120) NOT NULL,
+  time_slots VARCHAR(200) NOT NULL,
+  mode VARCHAR(20) NOT NULL,
+  place VARCHAR(120) NOT NULL,
+  note VARCHAR(400) NOT NULL DEFAULT '',
+  status VARCHAR(20) NOT NULL DEFAULT '等待中',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_need_responder (need_id, responder)
+);
+
+CREATE TABLE IF NOT EXISTS exchange_orders (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  need_id BIGINT NOT NULL,
+  response_id BIGINT NOT NULL,
+  requester VARCHAR(80) NOT NULL,
+  responder VARCHAR(80) NOT NULL,
+  offer_skill VARCHAR(120) NOT NULL,
+  time_slot VARCHAR(40) NOT NULL,
+  mode VARCHAR(20) NOT NULL,
+  place VARCHAR(120) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT '待确认',
+  confirmations VARCHAR(200) NOT NULL DEFAULT '',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_need (need_id)
+);
+
 CREATE TABLE IF NOT EXISTS reviews (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   from_user VARCHAR(80) NOT NULL,
